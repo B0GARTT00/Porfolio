@@ -162,6 +162,15 @@ body {
     font-weight: 500;
 }
 
+.profile-photo {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+    border: 5px solid #6c5ce7;
+}
+
 /* Buttons */
 .btn {
     display: inline-block;
