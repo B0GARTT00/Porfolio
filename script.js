@@ -2,16 +2,20 @@
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navLinks.classList.toggle('active');
-});
+if (hamburger) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+    });
+}
 
 // Close mobile menu when clicking a link
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navLinks.classList.remove('active');
+        if (hamburger) {
+            hamburger.classList.remove('active');
+            navLinks.classList.remove('active');
+        }
     });
 });
 
@@ -33,9 +37,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            const offsetTop = target.offsetTop - 80;
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
             });
         }
     });
@@ -44,40 +49,46 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Contact Form Handling
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(contactForm);
-    const data = Object.fromEntries(formData);
-    
-    // Here you would typically send the data to a server
-    // For now, we'll just show a success message
-    alert('Thank you for your message! I\'ll get back to you soon.');
-    contactForm.reset();
-});
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(contactForm);
+        const data = Object.fromEntries(formData);
+        
+        // Here you would typically send the data to a server
+        // For now, we'll just show a success message
+        alert('Thank you for your message! I\'ll get back to you soon.');
+        contactForm.reset();
+    });
+}
 
-// Intersection Observer for animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+// Scroll Animation Observer
+const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
         if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+            // Add delay for staggered effect
+            setTimeout(() => {
+                entry.target.classList.add('visible');
+            }, index * 100);
         }
     });
-}, observerOptions);
+}, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+});
 
-// Animate sections on scroll
-document.querySelectorAll('section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(30px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
+// Observe all animatable elements
+document.querySelectorAll('.project-card, .skill-card, .stat').forEach((el, index) => {
+    el.style.transitionDelay = `${index * 0.1}s`;
+    scrollObserver.observe(el);
+});
+
+// Observe sections for fade-in
+document.querySelectorAll('.about, .skills, .projects, .contact').forEach(section => {
+    section.classList.add('fade-in');
+    scrollObserver.observe(section);
 });
 
 // Animate skill bars on scroll
@@ -85,16 +96,17 @@ const skillObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             const progressBars = entry.target.querySelectorAll('.skill-progress');
-            progressBars.forEach(bar => {
+            progressBars.forEach((bar, index) => {
                 const width = bar.style.width;
                 bar.style.width = '0';
                 setTimeout(() => {
+                    bar.style.transition = 'width 1s ease';
                     bar.style.width = width;
-                }, 100);
+                }, 200 + (index * 100));
             });
         }
     });
-}, { threshold: 0.5 });
+}, { threshold: 0.3 });
 
 const skillsSection = document.querySelector('.skills');
 if (skillsSection) {
