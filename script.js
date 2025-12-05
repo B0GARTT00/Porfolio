@@ -46,6 +46,34 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// Custom Modal Functions
+function showModal(type, title, message) {
+    const modal = document.getElementById('modal');
+    const modalIcon = document.getElementById('modalIcon');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    
+    modalIcon.className = 'modal-icon ' + type;
+    modalIcon.textContent = type === 'success' ? '✓' : '✕';
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    
+    modal.classList.add('active');
+}
+
+function closeModal() {
+    const modal = document.getElementById('modal');
+    modal.classList.remove('active');
+}
+
+// Modal close button
+document.getElementById('modalBtn')?.addEventListener('click', closeModal);
+
+// Close modal on overlay click
+document.getElementById('modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+});
+
 // Contact Form Handling
 const contactForm = document.getElementById('contactForm');
 
@@ -68,13 +96,13 @@ if (contactForm) {
             });
             
             if (response.ok) {
-                alert('Thank you for your message! I\'ll get back to you soon.');
+                showModal('success', 'Message Sent!', 'Thank you for reaching out! I\'ll get back to you as soon as possible.');
                 contactForm.reset();
             } else {
-                alert('Oops! Something went wrong. Please try again.');
+                showModal('error', 'Oops!', 'Something went wrong. Please try again or email me directly.');
             }
         } catch (error) {
-            alert('Oops! Something went wrong. Please try again.');
+            showModal('error', 'Oops!', 'Something went wrong. Please try again or email me directly.');
         }
         
         submitBtn.textContent = originalText;
